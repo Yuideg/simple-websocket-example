@@ -1,0 +1,64 @@
+<html>
+<head>
+    <title>Melody example: chatting</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<style>
+    #chat{
+        text-align: left;
+        background: #262323;
+        width: 500px;
+        min-height: 300px;
+        color: white;
+        padding: 20px;
+    }
+    input{
+        width: 50%;
+        padding: 17px;
+        margin: 20px;
+    }
+
+</style>
+
+<body>
+<center>
+    <h3 style="color: blue">Chat Application</h3>
+    <div id="chat"></div>
+
+    <input placeholder="Enter Message" id="text" type="text">
+    <button id="sendbtn" type="button" class="btn btn-primary">Send</button>
+</center>
+
+<script>
+    var url = "ws://" + window.location.host + "/ws"+window.location.pathname;
+    var ws
+    var chat = document.getElementById("chat");
+    var text = document.getElementById("text");
+    var send = document.getElementById("sendbtn")
+    var now = function () {
+        var iso = new Date().toISOString();
+        return iso.split("T")[1].split(".")[0];
+    };
+    ws = new WebSocket(url);
+    ws.onmessage = function (msg) {
+        var line = ws.url+"-"+ msg.data + "\n";
+        chat.innerText += line;
+        send.addEventListener("click", function(e) {
+            ws.send(text.value);
+            text.value = "";
+        }, true);
+    };
+    text.onkeydown = function (e) {
+        if (e.keyCode === 13 && text.value !== "") {
+            ws.send(text.value);
+            text.value = "";
+        }
+    };
+
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
